@@ -1,6 +1,7 @@
 import {HttpContextContract} from "@ioc:Adonis/Core/HttpContext";
 import Question from "Domains/Questions/Models/Question";
 import {StoreValidator, UpdateValidator} from "App/Manager/Validators/QuestionValidator";
+import Reponse from "Domains/Questions/Models/Reponse";
 
 export default class QuestionsController {
 
@@ -22,9 +23,22 @@ export default class QuestionsController {
   public async store ({ bouncer, request }: HttpContextContract) {
     await bouncer.with('QuestionPolicy').authorize('store')
     const data = await request.validate(StoreValidator)
+    const question = await Question.create({
+      label: data.label,
+      enonce: data.enonce
+    })
 
-    return Question.create(data)
+    data.reponses.map(async (item) => {
+      await Reponse.create({
+        questionId: question.id,
+        body: item.body,
+        valide: item.valide
+      })
+    })
+
+    return question
   }
+
   public async update ({ bouncer, request, params }: HttpContextContract) {
     await bouncer.with('QuestionPolicy').authorize('update')
     const question = await Question.findByOrFail('slug', params.id)

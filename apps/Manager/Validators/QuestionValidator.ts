@@ -7,6 +7,12 @@ export class StoreValidator {
   public schema = schema.create({
     label: schema.string({ trim: true }),
     enonce: schema.string({ trim: true }),
+    reponses: schema.array().members(
+      schema.object().members({
+        body: schema.string(),
+        valide: schema.boolean()
+      })
+    )
   })
 
   public messages: CustomMessages = {}
