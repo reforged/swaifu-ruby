@@ -13,7 +13,6 @@ Route.group(() => {
   Route.group(() => {
     Route.group(() => {
       Route.get('/', 'EtiquettesController.index')
-      Route.get('/user/:id', 'EtiquettesController.user')
       Route.get('/:id', 'EtiquettesController.show')
 
       Route.post('/create', 'EtiquettesController.store')
