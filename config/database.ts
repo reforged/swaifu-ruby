@@ -48,6 +48,7 @@ const databaseConfig: DatabaseConfig = {
         naturalSort: true,
         paths: [
           join(process.cwd(), 'domains', 'Users', 'Migrations'),
+          join(process.cwd(), 'domains', 'Etiquettes', 'Migrations'),
         ]
       },
       seeders: {
