@@ -31,6 +31,9 @@ export default class Question extends BaseModel {
   @column()
   public enonce: string
 
+  @column()
+  public userId: string
+
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>
 
