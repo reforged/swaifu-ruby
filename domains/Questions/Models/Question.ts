@@ -3,7 +3,7 @@ import {
   beforeCreate,
   BelongsTo,
   belongsTo,
-  column,
+  column, HasMany, hasMany,
   ManyToMany,
   manyToMany
 } from '@ioc:Adonis/Lucid/Orm'
@@ -12,6 +12,7 @@ import {randomUUID} from "crypto";
 import {slugify} from "@ioc:Adonis/Addons/LucidSlugify";
 import Etiquette from "Domains/Etiquettes/Models/Etiquette";
 import User from "Domains/Users/Models/User";
+import Reponse from "Domains/Questions/Models/Reponse";
 
 export default class Question extends BaseModel {
   @column({ isPrimary: true })
@@ -32,6 +33,9 @@ export default class Question extends BaseModel {
   public enonce: string
 
   @column()
+  public type: string
+
+  @column()
   public userId: string
 
   @belongsTo(() => User)
@@ -39,6 +43,9 @@ export default class Question extends BaseModel {
 
   @manyToMany(() => Etiquette)
   public etiquettes: ManyToMany<typeof Etiquette>
+  
+  @hasMany(() => Reponse)
+  public reponses: HasMany<typeof Reponse>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
