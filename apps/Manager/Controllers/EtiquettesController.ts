@@ -11,7 +11,7 @@ export default class EtiquettesController {
   public async show ({ bouncer, params }: HttpContextContract) {
     await bouncer.with('EtiquettePolicy').authorize('view')
 
-    return Etiquette.findByOrFail('slug', params.id)
+    return Etiquette.findOrFail(params.id)
   }
 
   public async store ({ bouncer, request }: HttpContextContract) {
@@ -20,17 +20,27 @@ export default class EtiquettesController {
 
     return Etiquette.create(data)
   }
-  public async update ({ bouncer, params, request }: HttpContextContract) {
+
+  public async update ({ bouncer, params, request, response }: HttpContextContract) {
     await bouncer.with('EtiquettePolicy').authorize('update')
-    const etiquette = await Etiquette.findByOrFail('slug', params.id)
+    const etiquette = await Etiquette.findOrFail(params.id)
     const data = await request.validate(UpdateValidator)
 
-    return etiquette.merge(data).save
-  }
-  public async destroy ({ bouncer, params }: HttpContextContract) {
-    await bouncer.with('EtiquettePolicy').authorize('destroy')
-    const etiquette = await Etiquette.findByOrFail('slug', params.id)
+    await etiquette.merge(data).save
 
-    return etiquette.delete()
+    return response.send({
+      message: "Etiquette modifiée",
+      etiquette: etiquette
+    })
+  }
+  public async destroy ({ bouncer, params, response }: HttpContextContract) {
+    await bouncer.with('EtiquettePolicy').authorize('destroy')
+    const etiquette = await Etiquette.findOrFail(params.id)
+
+    await etiquette.delete()
+    return response.send({
+      message: "Etiquette supprimé",
+      etiquette: etiquette
+    })
   }
 }
