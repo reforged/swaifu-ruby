@@ -9,6 +9,7 @@ export default class extends BaseSchema {
       table.string('label').notNullable()
       table.string('slug').unique()
       table.string('enonce')
+      table.string('type')
       table.string('user_id').references('id').inTable('users')
         .onDelete('CASCADE')
 
