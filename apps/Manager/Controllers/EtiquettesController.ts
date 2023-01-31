@@ -24,10 +24,11 @@ export default class EtiquettesController {
 
   public async update ({ bouncer, params, request, response }: HttpContextContract) {
     await bouncer.with('EtiquettePolicy').authorize('update')
+    
     const etiquette = await Etiquette.findOrFail(params.id)
     const data = await request.validate(UpdateValidator)
-
-    await etiquette.merge(data).save
+    
+    await etiquette.merge(data).save()
 
     return response.send({
       message: "Etiquette modifiée",
