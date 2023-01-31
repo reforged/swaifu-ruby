@@ -8,6 +8,7 @@ export default class EtiquettesController {
 
     return Etiquette.query()
   }
+
   public async show ({ bouncer, params }: HttpContextContract) {
     await bouncer.with('EtiquettePolicy').authorize('view')
 
@@ -33,6 +34,7 @@ export default class EtiquettesController {
       etiquette: etiquette
     })
   }
+
   public async destroy ({ bouncer, params, response }: HttpContextContract) {
     await bouncer.with('EtiquettePolicy').authorize('destroy')
     const etiquette = await Etiquette.findOrFail(params.id)
