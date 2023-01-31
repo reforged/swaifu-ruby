@@ -6,9 +6,7 @@ export default class extends BaseSchema {
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.string('id').primary()
-      table.string('label').notNullable()
-      table.string('slug').unique()
-      table.string('description')
+      table.string('label').notNullable().unique()
       table.string('color')
 
       table.timestamp('created_at', { useTz: true })

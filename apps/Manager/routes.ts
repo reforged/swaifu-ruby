@@ -3,6 +3,7 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.group(() => {
   Route.group(() => {
     Route.post('/login', 'AuthController.login').as('auth.login')
+    Route.post('/register', 'AuthController.register')
 
     Route.group(() => {
       Route.get('/me', 'AuthController.me').as('auth.me')
@@ -29,5 +30,5 @@ Route.group(() => {
       Route.put('/:id', 'QuestionsController.update')
       Route.delete('/:id', 'QuestionsController.destroy')
     }).prefix('questions')
-  }).middleware(['auth'])
+  })
 }).namespace('App/Manager/Controllers')

@@ -1,6 +1,5 @@
 import {BaseModel, beforeCreate, column} from "@ioc:Adonis/Lucid/Orm";
 import {DateTime} from "luxon";
-import {slugify} from "@ioc:Adonis/Addons/LucidSlugify";
 import {randomUUID} from "crypto";
 
 export default class Etiquette extends BaseModel {
@@ -9,17 +8,6 @@ export default class Etiquette extends BaseModel {
 
   @column()
   public label: string
-
-  @column()
-  @slugify({
-    strategy: 'dbIncrement',
-    fields: ['label'],
-    allowUpdates: true
-  })
-  public slug: string
-
-  @column()
-  public description: string
 
   @column()
   public color: string

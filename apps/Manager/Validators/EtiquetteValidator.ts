@@ -6,7 +6,6 @@ export class StoreValidator {
 
   public schema = schema.create({
     label: schema.string({ trim: true }),
-    description: schema.string({ trim: true }),
     color: schema.string({ trim: true }),
   })
 
@@ -18,7 +17,6 @@ export class UpdateValidator {
 
   public schema = schema.create({
     label: schema.string.optional({ trim: true }),
-    description: schema.string.optional({ trim: true }),
     color: schema.string.optional({ trim: true }),
   })
 
