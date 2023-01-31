@@ -11,7 +11,7 @@ export default class AuthController {
       response.send({
         message: "Vous vous êtes bien connecté",
         user: auth.user,
-        token: token
+        token: `Bearer ${token.token}`
       })
     } catch {
       return response.badRequest('Invalid credentials')

@@ -49,6 +49,7 @@ const databaseConfig: DatabaseConfig = {
         paths: [
           join(process.cwd(), 'domains', 'Users', 'Migrations'),
           join(process.cwd(), 'domains', 'Etiquettes', 'Migrations'),
+          join(process.cwd(), 'domains', 'Questions', 'Migrations'),
         ]
       },
       seeders: {

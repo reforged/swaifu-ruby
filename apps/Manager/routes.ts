@@ -19,5 +19,15 @@ Route.group(() => {
       Route.put('/:id', 'EtiquettesController.update')
       Route.delete('/:id', 'EtiquettesController.destroy')
     }).prefix('etiquettes')
+
+    Route.group(() => {
+      Route.get('/', 'QuestionsController.index')
+      Route.get('/user/:id', 'QuestionsController.user')
+      Route.get('/:id', 'QuestionsController.show')
+
+      Route.post('/create', 'QuestionsController.store')
+      Route.put('/:id', 'QuestionsController.update')
+      Route.delete('/:id', 'QuestionsController.destroy')
+    }).prefix('questions')
   }).middleware(['auth'])
 }).namespace('App/Manager/Controllers')
