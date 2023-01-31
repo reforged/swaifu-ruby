@@ -18,6 +18,10 @@ export default class AuthController {
     }
   }
 
+  public async register ({}: HttpContextContract) {
+
+  }
+
   public async logout ({ auth }: HttpContextContract) {
     await auth.use('api').revoke()
     return {
@@ -27,8 +31,8 @@ export default class AuthController {
 
   public async me ({ auth }: HttpContextContract) {
     const user = auth.user as User
-    user.load('permissions')
-    user.load('roles')
+    await user.load('permissions')
+    await user.load('roles')
 
     return user
   }
