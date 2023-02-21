@@ -1,6 +1,7 @@
-import {BaseModel, beforeCreate, column} from "@ioc:Adonis/Lucid/Orm";
+import {BaseModel, beforeCreate, column, ManyToMany, manyToMany} from "@ioc:Adonis/Lucid/Orm";
 import {DateTime} from "luxon";
 import {randomUUID} from "crypto";
+import Question from "Domains/Questions/Models/Question";
 
 export default class Etiquette extends BaseModel {
   @column({ isPrimary: true })
@@ -11,6 +12,9 @@ export default class Etiquette extends BaseModel {
 
   @column()
   public color: string
+  
+  @manyToMany(() => Question)
+  public questions: ManyToMany<typeof Question>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

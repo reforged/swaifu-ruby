@@ -14,7 +14,7 @@ export default class QuestionsController {
   }
   public async show ({ bouncer, params }: HttpContextContract) {
     await bouncer.with('QuestionPolicy').authorize('view')
-    return Question.findByOrFail('slug', params.id)
+    return Question.query().where('id', params.id).preload('reponses').preload('etiquettes').preload('user').first()
   }
 
   public async user ({ bouncer, auth}: HttpContextContract) {
@@ -28,15 +28,20 @@ export default class QuestionsController {
   public async store ({ bouncer, request, auth }: HttpContextContract) {
     await bouncer.with('QuestionPolicy').authorize('store')
     const data = await request.validate(StoreValidator)
+    console.log(data.enonce.toString())
+
+    const enonce = {
+      data: data.enonce
+    }
 
     const question = await Question.create({
       label: data.label,
-      enonce: data.enonce,
+      enonce: enonce,
       userId: auth.user?.id,
       type: data.type
     })
-
-    await question.related('etiquettes').attach(data.etiquettes)
+    const etiquettes = await data.etiquettes.map((item) => item.id)
+    await question.related('etiquettes').attach(etiquettes)
 
     data.reponses.map(async (item) => {
       await Reponse.create({
@@ -79,12 +84,15 @@ export default class QuestionsController {
     })
 
   }
-  public async destroy ({ bouncer, params }: HttpContextContract) {
+  public async destroy ({ bouncer, params, response }: HttpContextContract) {
     await bouncer.with('QuestionPolicy').authorize('destroy')
-    const question = await Question.findByOrFail('slug', params.id)
+    const question = await Question.findOrFail(params.id)
 
     await question.delete()
-    return
+    return response.send({
+      message: 'Question supprimée',
+      question
+    })
   }
 
   public async deleteReponses (question: Question) {

@@ -32,7 +32,9 @@ export default class AuthController {
   public async me ({ auth }: HttpContextContract) {
     const user = auth.user as User
     await user.load('permissions')
-    await user.load('roles')
+    await user.load('roles', (query) => {
+      query.preload('permissions')
+    })
 
     return user
   }

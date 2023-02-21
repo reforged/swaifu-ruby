@@ -6,9 +6,15 @@ export class StoreValidator {
 
   public schema = schema.create({
     label: schema.string({ trim: true }),
-    enonce: schema.string({ trim: true }),
+    enonce: schema.array().members(
+      schema.object().members({
+        type: schema.string(),
+        uid: schema.string(),
+        fields: schema.object().anyMembers()
+      })
+    ),
     type: schema.string({ trim: true }),
-    etiquettes: schema.array().members(schema.string({ trim: true })),
+    etiquettes: schema.array().members(schema.object().anyMembers()),
     reponses: schema.array().members(
       schema.object().members({
         body: schema.string(),

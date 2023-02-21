@@ -12,7 +12,7 @@ export default class EtiquettesController {
   public async show ({ bouncer, params }: HttpContextContract) {
     await bouncer.with('EtiquettePolicy').authorize('view')
 
-    return Etiquette.findOrFail(params.id)
+    return Etiquette.query().where('id', params.id).preload('questions').first()
   }
 
   public async store ({ bouncer, request }: HttpContextContract) {
@@ -24,10 +24,10 @@ export default class EtiquettesController {
 
   public async update ({ bouncer, params, request, response }: HttpContextContract) {
     await bouncer.with('EtiquettePolicy').authorize('update')
-    
+
     const etiquette = await Etiquette.findOrFail(params.id)
     const data = await request.validate(UpdateValidator)
-    
+
     await etiquette.merge(data).save()
 
     return response.send({

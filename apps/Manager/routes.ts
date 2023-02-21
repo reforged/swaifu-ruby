@@ -30,5 +30,5 @@ Route.group(() => {
       Route.put('/:id', 'QuestionsController.update')
       Route.delete('/:id', 'QuestionsController.destroy')
     }).prefix('questions')
-  })
+  }).middleware(['auth'])
 }).namespace('App/Manager/Controllers')

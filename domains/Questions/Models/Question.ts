@@ -29,8 +29,12 @@ export default class Question extends BaseModel {
   })
   public slug: string
 
-  @column()
-  public enonce: string
+  @column({
+    serialize: (value) => {
+      return value.data
+    }
+  })
+  public enonce: JSON
 
   @column()
   public type: string
@@ -43,7 +47,7 @@ export default class Question extends BaseModel {
 
   @manyToMany(() => Etiquette)
   public etiquettes: ManyToMany<typeof Etiquette>
-  
+
   @hasMany(() => Reponse)
   public reponses: HasMany<typeof Reponse>
 
