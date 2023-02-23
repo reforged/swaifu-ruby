@@ -52,6 +52,7 @@ export default class QuestionsController {
     })
     await question.load('etiquettes')
     await question.load('reponses')
+    await question.load('user')
 
     return question
   }
