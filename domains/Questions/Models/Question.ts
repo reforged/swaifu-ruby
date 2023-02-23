@@ -34,7 +34,7 @@ export default class Question extends BaseModel {
       return value.data
     }
   })
-  public enonce: JSON
+  public enonce: any
 
   @column()
   public type: string

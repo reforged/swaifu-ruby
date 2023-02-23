@@ -31,7 +31,13 @@ export class UpdateValidator {
 
   public schema = schema.create({
     label: schema.string.optional({ trim: true }),
-    enonce: schema.string.optional({ trim: true }),
+    enonce: schema.array.optional().members(
+      schema.object().members({
+        type: schema.string(),
+        uid: schema.string(),
+        fields: schema.object().anyMembers()
+      })
+    ),
     type: schema.string.optional({ trim: true }),
     etiquettes: schema.array([rules.minLength(1)]).members(schema.string({ trim: true })),
     reponses: schema.array([rules.minLength(1)]).members(
