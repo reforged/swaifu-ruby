@@ -9,6 +9,7 @@ import Env from '@ioc:Adonis/Core/Env'
 import { DatabaseConfig } from '@ioc:Adonis/Lucid/Database'
 import {join} from "node:path";
 import {readdirSync} from "node:fs";
+import * as process from "process";
 
 const databaseConfig: DatabaseConfig = {
   /*
@@ -50,6 +51,7 @@ const databaseConfig: DatabaseConfig = {
           join(process.cwd(), 'domains', 'Users', 'Migrations'),
           join(process.cwd(), 'domains', 'Etiquettes', 'Migrations'),
           join(process.cwd(), 'domains', 'Questions', 'Migrations'),
+          join(process.cwd(), 'domains', 'Sequences', 'Migrations'),
         ]
       },
       seeders: {
