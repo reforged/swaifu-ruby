@@ -23,8 +23,8 @@ export default class User extends BaseModel {
   public email: string
 
   @column()
-  public ine: string
-  
+  public numero: string
+
   @column()
   public firstname: string
 
@@ -42,7 +42,7 @@ export default class User extends BaseModel {
 
   @manyToMany(() => Role)
   public roles: ManyToMany<typeof Role>
-  
+
   @hasMany(() => Question)
   public questions: HasMany<typeof Question>
 

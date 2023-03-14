@@ -15,7 +15,7 @@ export default class MakeUser extends BaseCommand {
     const firstname = await this.prompt.ask('Enter user firstname')
     const lastname = await this.prompt.ask('Enter user lastname')
     const email = await this.prompt.ask('Choose email')
-    const ine = await this.prompt.ask('Choose CODE INE')
+    const numero = await this.prompt.ask('Choose student code')
     const password = await this.prompt.secure('Choose account password')
     const passwordConfirmation = await this.prompt.secure('Confirm account password')
 
@@ -28,7 +28,7 @@ export default class MakeUser extends BaseCommand {
       firstname: firstname,
       lastname: lastname,
       email: email,
-      ine: ine,
+      numero: numero,
       password: password,
     })
 

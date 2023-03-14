@@ -30,5 +30,34 @@ Route.group(() => {
       Route.put('/:id', 'QuestionsController.update')
       Route.delete('/:id', 'QuestionsController.destroy')
     }).prefix('questions')
+
+    Route.group(() => {
+      Route.get('/', 'SequencesController.index')
+      Route.get('/:id', 'SequencesController.show')
+      Route.post('/create', 'SequencesController.store')
+      Route.put('/:id', 'SequencesController.update')
+      Route.delete('/:id', 'SequencesController.destroy')
+    }).prefix('sequences')
+
+    Route.group(() => {
+      Route.get('/', 'UsersController.index')
+      Route.get('/:id', 'UsersController.show')
+      Route.post('/create', 'UsersController.store')
+      Route.post('/create-many', 'UsersController.createMany')
+
+      Route.put('/:id', 'UsersController.update')
+      Route.delete('/:id', 'UsersController.destroy')
+    }).prefix('users')
+
+    Route.group(() => {
+      Route.get('/', 'RolesController.index')
+      Route.get('/:id', 'RolesController.show')
+      Route.post('/create', 'RolesController.store')
+    }).prefix('roles')
+
+    Route.group(() => {
+      Route.get('/', 'PermissionsController.index')
+      Route.get('/:id', 'PermissionsController.show')
+    }).prefix('permissions')
   }).middleware(['auth'])
 }).namespace('App/Manager/Controllers')

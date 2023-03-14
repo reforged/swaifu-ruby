@@ -8,6 +8,10 @@ export default class AuthController {
 
     try {
       const token = await auth.use('api').attempt(email, password)
+      await auth.user?.load('permissions')
+      await auth.user?.load('roles', (query) => {
+        query.preload('permissions')
+      })
       response.send({
         message: "Vous vous êtes bien connecté",
         user: auth.user,
