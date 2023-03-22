@@ -3,6 +3,8 @@ import {inject} from "@adonisjs/fold";
 import Ws from "App/Services/Ws";
 import User from "Domains/Users/Models/User";
 import ModelSession from 'Domains/Sequences/Models/Session'
+import HelperPolicy from "App/Manager/Policies/HelperPolicy";
+import Question from "Domains/Questions/Models/Question";
 @inject()
 export default class Session {
   @inject()
@@ -16,7 +18,6 @@ export default class Session {
       const user = await User.findOrFail(data.user.id)
       const session = await ModelSession.findBy('code', data.code)
       if (!session) {
-        console.log('error')
         return socket.emit('error', {
           message: "Session non existante",
           code: data.code
@@ -35,7 +36,6 @@ export default class Session {
         query.preload('reponses')
       })
       const participants = session.users.map((item) => item.id)
-      console.log(participants)
       if (participants.includes(user.id)) {
         console.log(session)
         socket.emit('join_success', {
@@ -43,12 +43,25 @@ export default class Session {
           session: session,
         })
       } else {
+        console.log("test")
         await session.related('users').create(user)
       }
 
-
+      const newSession = await ModelSession.query()
+        .where('id', session.id)
+        .preload('users', (query) => {
+          query.preload('questions')
+        })
+        .preload('question', (query) => query.preload('reponses'))
+        .preload('reponses', (query) => query.preload('question'))
+        .preload('sequence', (query) => {
+          query.preload('questions', (query) => {
+            query.preload('reponses')
+          })
+        }).first()
+      //console.log(session)
       Ws.io.emit('new_user', {
-        session
+        session: newSession
       })
     })
 
@@ -88,9 +101,38 @@ export default class Session {
       await session.merge({
         questionId: data.question.id
       }).save()
+      await session.load('question', (query) => {
+        query.preload('reponses')
+      })
+      await session.load('sequence')
+      console.log("LOG", session, data.question)
       Ws.io.emit('new_question', {
         session,
         question: data.question
+      })
+    })
+
+
+    socket.on('show_answer', async (data) => {
+      console.log(data)
+      const session = await ModelSession.query()
+        .where('id', data.session.id)
+        .preload('question', (query) => {
+          query.preload('reponses')
+        })
+        .preload('reponses', (query) => {
+          query.preload('question')
+        })
+        .first()
+      const question = await Question.query()
+        .where('id', data.session.question.id)
+        .preload('reponses')
+        .first()
+      if (!question) return
+      Ws.io.emit('show_answer', {
+        message: "test",
+        session,
+        reponses: question.reponses
       })
     })
 
@@ -109,18 +151,42 @@ export default class Session {
         body: data.reponse.body,
         valide: reponse.valide
       })
+      await session.load('sequence', (query) => {
+        query.preload('questions', (query) => {
+          query.preload('reponses')
+        })
+      })
       await session.load('reponses', (query) => {
         query.preload('question')
       })
       await session.load('question', (query) => {
         query.preload('reponses')
       })
+      await session.load('users')
       console.log(session.reponses)
       socket.emit('response_of_answer_sending', {
         message: "Réponse enregistré !",
         session,
         wainting: true
       })
+
+
+      Ws.io.emit('update_answers', {
+        session
+      })
+    })
+
+    socket.on('delete_session', async (data) => {
+      const session = await ModelSession.findOrFail(data.session.id)
+      const user = await User.find(data.user.id)
+      if (!user) return
+      const permissions: string[] = await HelperPolicy.getPermissions(user)
+      if (permissions.includes('admin') || permissions.includes('store:session')) {
+        await session.merge({
+          status: 'finish'
+        }).save()
+        Ws.io.emit('session_deleted')
+      }
     })
   }
 }
