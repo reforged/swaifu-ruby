@@ -8,10 +8,15 @@ export default class extends BaseSchema {
       table.string('id').primary()
 
       table.string('code').unique().notNullable()
+      table.string('status')
       table.string('sequence_id')
         .references('id')
         .inTable('sequences')
         .onDelete('CASCADE')
+
+      table.string('question_id')
+        .references('id')
+        .inTable('questions')
 
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })

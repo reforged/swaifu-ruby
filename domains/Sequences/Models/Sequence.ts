@@ -1,12 +1,27 @@
-import {BaseModel, beforeCreate, column, HasMany, hasMany} from '@ioc:Adonis/Lucid/Orm'
+import {
+  BaseModel,
+  beforeCreate,
+  column,
+  HasMany,
+  hasMany,
+  ManyToMany,
+  manyToMany
+} from '@ioc:Adonis/Lucid/Orm'
 import {DateTime} from "luxon";
 import {randomUUID} from "crypto";
 import Session from "Domains/Sequences/Models/Session";
+import Question from "Domains/Questions/Models/Question";
 
 export default class Sequence extends BaseModel {
   @column({ isPrimary: true })
   public id: string
-  
+
+  @column()
+  public label: string
+
+  @manyToMany(() => Question)
+  public questions: ManyToMany<typeof Question>
+
   @hasMany(() => Session)
   public sessions: HasMany<typeof Session>
 

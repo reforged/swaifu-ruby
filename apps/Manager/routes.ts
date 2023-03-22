@@ -40,6 +40,13 @@ Route.group(() => {
     }).prefix('sequences')
 
     Route.group(() => {
+      Route.get('/', 'SessionsController.index')
+      Route.get('/:id', 'SessionsController.show')
+      Route.get('/user/:id', 'SessionsController.user')
+      Route.post('/create', 'SessionsController.store')
+    }).prefix('sessions')
+
+    Route.group(() => {
       Route.get('/', 'UsersController.index')
       Route.get('/:id', 'UsersController.show')
       Route.post('/create', 'UsersController.store')

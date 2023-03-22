@@ -14,6 +14,7 @@ import { randomUUID } from 'crypto'
 import Permission from 'Domains/Users/Models/Permission'
 import Role from 'Domains/Users/Models/Role'
 import Question from "Domains/Questions/Models/Question";
+import Session from "Domains/Sequences/Models/Session";
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -45,6 +46,9 @@ export default class User extends BaseModel {
 
   @hasMany(() => Question)
   public questions: HasMany<typeof Question>
+
+  @manyToMany(() => Session)
+  public sessions: ManyToMany<typeof Session>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

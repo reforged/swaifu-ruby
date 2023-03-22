@@ -14,7 +14,11 @@ export class StoreValidator {
       })
     ),
     type: schema.string({ trim: true }),
-    etiquettes: schema.array().members(schema.object().anyMembers()),
+    etiquettes: schema.array().members(
+      schema.string({}, [
+        rules.exists({table: 'etiquettes', column: 'id'})
+      ])
+    ),
     reponses: schema.array().members(
       schema.object().members({
         body: schema.string(),
@@ -23,7 +27,9 @@ export class StoreValidator {
     )
   })
 
-  public messages: CustomMessages = {}
+  public messages: CustomMessages = {
+    'etiquettes.*.rules.exists': "L'étiquette n'existe pas"
+  }
 }
 
 export class UpdateValidator {

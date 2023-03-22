@@ -28,7 +28,6 @@ export default class QuestionsController {
   public async store ({ bouncer, request, auth }: HttpContextContract) {
     await bouncer.with('QuestionPolicy').authorize('store')
     const data = await request.validate(StoreValidator)
-    console.log(data.enonce.toString())
 
     const enonce = {
       data: data.enonce
@@ -40,8 +39,7 @@ export default class QuestionsController {
       userId: auth.user?.id,
       type: data.type
     })
-    const etiquettes = await data.etiquettes.map((item) => item.id)
-    await question.related('etiquettes').attach(etiquettes)
+    await question.related('etiquettes').sync(data.etiquettes)
 
     data.reponses.map(async (item) => {
       await Reponse.create({

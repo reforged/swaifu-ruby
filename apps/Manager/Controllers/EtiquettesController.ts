@@ -10,7 +10,7 @@ export default class EtiquettesController {
   }
 
   public async show ({ bouncer, params }: HttpContextContract) {
-    await bouncer.with('EtiquettePolicy').authorize('view')
+    await bouncer.with('EtiquettePolicy').authorize('update')
 
     return Etiquette.query().where('id', params.id).preload('questions').first()
   }

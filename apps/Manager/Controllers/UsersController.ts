@@ -14,6 +14,7 @@ export default class UsersController {
   public async createMany ({ request }: HttpContextContract) {
     const data = await request.validate(CreateManyValidator)
     console.log(data.users)
+
     await User.createMany(data.users)
   }
 }

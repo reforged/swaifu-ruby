@@ -13,6 +13,7 @@ import {slugify} from "@ioc:Adonis/Addons/LucidSlugify";
 import Etiquette from "Domains/Etiquettes/Models/Etiquette";
 import User from "Domains/Users/Models/User";
 import Reponse from "Domains/Questions/Models/Reponse";
+import Sequence from "Domains/Sequences/Models/Sequence";
 
 export default class Question extends BaseModel {
   @column({ isPrimary: true })
@@ -47,6 +48,9 @@ export default class Question extends BaseModel {
 
   @manyToMany(() => Etiquette)
   public etiquettes: ManyToMany<typeof Etiquette>
+
+  @manyToMany(() => Sequence)
+  public sequences: ManyToMany<typeof Sequence>
 
   @hasMany(() => Reponse)
   public reponses: HasMany<typeof Reponse>
