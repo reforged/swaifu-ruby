@@ -12,9 +12,15 @@ export default class QuestionsController {
       .preload('user')
       .preload('etiquettes')
   }
+
   public async show ({ bouncer, params }: HttpContextContract) {
     await bouncer.with('QuestionPolicy').authorize('view')
-    return Question.query().where('id', params.id).preload('reponses').preload('etiquettes').preload('user').first()
+    console.log(params.id)
+    const question = await Question.findOrFail(params.id)
+    await question.load('reponses')
+    await question.load('etiquettes')
+    await question.load('user')
+    return question
   }
 
   public async user ({ bouncer, auth}: HttpContextContract) {
@@ -59,13 +65,13 @@ export default class QuestionsController {
     await bouncer.with('QuestionPolicy').authorize('update')
     const question = await Question.findOrFail(params.id)
     const data = await request.validate(UpdateValidator)
+    console.log(data)
     await question.load('etiquettes')
     await question.load('reponses')
-    await question.related('etiquettes').detach()
     await this.deleteReponses(question)
 
     if (data.etiquettes) {
-      await question.related('etiquettes').attach(data.etiquettes)
+      await question.related('etiquettes').sync(data.etiquettes)
     }
 
     data.reponses.map(async (item) => {
@@ -75,8 +81,15 @@ export default class QuestionsController {
         valide: item.valide
       })
     })
+    const enonce = {
+      data: data.enonce
+    }
 
-    await question.merge(data).save()
+    await question.merge({
+      ...data,
+      enonce: enonce
+    }).save()
+    console.log(question.enonce)
     return response.send({
       message: "Question modifiée",
       question: question
