@@ -2,7 +2,8 @@ import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
   Route.group(() => {
-    Route.post('/login', 'AuthController.login').as('auth.login')
+    Route.post('/login/numero', 'AuthController.loginNumero').as('auth.login.numero')
+    Route.post('/login/email', 'AuthController.loginEmail').as('auth.login.email')
     Route.post('/register', 'AuthController.register')
 
     Route.group(() => {
@@ -12,6 +13,9 @@ Route.group(() => {
   }).prefix('authentication')
 
   Route.group(() => {
+    Route.group(() => {
+      Route.put('/update', 'UsersController.updateMe')
+    }).prefix('profile')
     Route.group(() => {
       Route.get('/', 'EtiquettesController.index')
       Route.get('/:id', 'EtiquettesController.show')

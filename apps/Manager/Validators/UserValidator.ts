@@ -19,3 +19,14 @@ export class CreateManyValidator {
 
   public messages: CustomMessages = {}
 }
+
+export class UpdateMeValidator {
+  constructor(protected ctx: HttpContextContract) {}
+
+  public schema = schema.create({
+    firstname: schema.string.optional({ trim: true }),
+    lastname: schema.string.optional({ trim: true })
+  })
+
+  public messages: CustomMessages = {}
+}
