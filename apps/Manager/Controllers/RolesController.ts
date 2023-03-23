@@ -4,7 +4,10 @@ import {StoreValidator} from "App/Manager/Validators/RoleValidator";
 
 export default class RolesController {
   public async index () {
-    return Role.query().orderBy('power', 'desc')
+    return Role.query()
+      .preload('permissions')
+      .preload('users')
+      .orderBy('power', 'desc')
   }
 
   public async show ({ params }: HttpContextContract) {
