@@ -64,6 +64,8 @@ Route.group(() => {
       Route.get('/', 'RolesController.index')
       Route.get('/:id', 'RolesController.show')
       Route.post('/create', 'RolesController.store')
+
+      Route.delete('/:id', 'RolesController.destroy')
     }).prefix('roles')
 
     Route.group(() => {

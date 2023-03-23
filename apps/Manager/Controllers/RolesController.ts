@@ -20,4 +20,10 @@ export default class RolesController {
 
     return Role.create(data)
   }
+
+  public async destroy ({ params }: HttpContextContract) {
+    const role = await Role.findOrFail(params.id)
+
+    return role.delete()
+  }
 }
