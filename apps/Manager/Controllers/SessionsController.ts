@@ -6,7 +6,14 @@ export default class SessionsController {
   public async index ({ bouncer }: HttpContextContract) {
     await bouncer.with('SessionPolicy').authorize('view')
     return Session.query()
-      .preload('sequence')
+      .where('status', 'finish')
+      .preload('reponses')
+      .preload('users')
+      .preload('sequence', (query) => {
+        query.preload('questions', (query) => {
+          query.preload('reponses')
+        })
+      })
   }
 
   public async show ({ params, bouncer }: HttpContextContract) {

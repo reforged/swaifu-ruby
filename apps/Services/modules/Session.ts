@@ -37,13 +37,11 @@ export default class Session {
       })
       const participants = session.users.map((item) => item.id)
       if (participants.includes(user.id)) {
-        console.log(session)
         socket.emit('join_success', {
           message: "Vous avez rejoins la session",
           session: session,
         })
       } else {
-        console.log("test")
         await session.related('users').create(user)
       }
 
@@ -66,7 +64,6 @@ export default class Session {
     })
 
     socket.on('lock_answer', async (data) => {
-      console.log(data)
       Ws.io.emit('lock_answer', {
         session: data.session,
         locked: data.locked
@@ -80,7 +77,6 @@ export default class Session {
           query.preload('reponses')
         })
       })
-      console.log(session)
       await session.merge({
         status: 'starting',
         questionId: session.sequence.questions[0].id
@@ -96,8 +92,8 @@ export default class Session {
     })
 
     socket.on('new_question', async (data) => {
-      const session = await ModelSession.findOrFail(data.session.id)
       console.log(data)
+      const session = await ModelSession.findOrFail(data.session.id)
       await session.merge({
         questionId: data.question.id
       }).save()
@@ -105,7 +101,6 @@ export default class Session {
         query.preload('reponses')
       })
       await session.load('sequence')
-      console.log("LOG", session, data.question)
       Ws.io.emit('new_question', {
         session,
         question: data.question
@@ -114,7 +109,6 @@ export default class Session {
 
 
     socket.on('show_answer', async (data) => {
-      console.log(data)
       const session = await ModelSession.query()
         .where('id', data.session.id)
         .preload('question', (query) => {
@@ -139,18 +133,34 @@ export default class Session {
     socket.on('send_answer', async (data) => {
       const user = await User.findOrFail(data.user.id)
       const session = await ModelSession.findOrFail(data.session.id)
-      const reponse = data.question.reponses.find((item) => item.id === data.reponse.id)
-      await session.related('reponses').firstOrCreate({
-        sessionId: session.id,
-        userId: user.id,
-        questionId: data.question.id
-      }, {
-        sessionId: session.id,
-        userId: user.id,
-        questionId: data.question.id,
-        body: data.reponse.body,
-        valide: reponse.valide
-      })
+      console.log(data)
+      if (data.session.question.type === 'input') {
+        await session.related('reponses').firstOrCreate({
+          sessionId: session.id,
+          userId: user.id,
+          questionId: data.question.id
+        }, {
+          sessionId: session.id,
+          userId: user.id,
+          questionId: data.question.id,
+          body: data.reponse.value,
+          valide: data.question.reponses[0].valide
+        })
+      } else {
+        const reponse = data.question.reponses.find((item) => item.body === data.reponse.body)
+        await session.related('reponses').firstOrCreate({
+          sessionId: session.id,
+          userId: user.id,
+          questionId: data.question.id
+        }, {
+          sessionId: session.id,
+          userId: user.id,
+          questionId: data.question.id,
+          body: data.reponse.body,
+          valide: reponse.valide
+        })
+      }
+
       await session.load('sequence', (query) => {
         query.preload('questions', (query) => {
           query.preload('reponses')
@@ -163,7 +173,6 @@ export default class Session {
         query.preload('reponses')
       })
       await session.load('users')
-      console.log(session.reponses)
       socket.emit('response_of_answer_sending', {
         message: "Réponse enregistré !",
         session,

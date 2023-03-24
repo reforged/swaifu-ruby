@@ -23,7 +23,7 @@ export default class AuthController {
     }
   }
 
-  public async loginCode ({ auth, request, response }: HttpContextContract) {
+  public async loginNumero ({ auth, request, response }: HttpContextContract) {
     const numero = request.input('numero')
     const password = request.input('password')
 
