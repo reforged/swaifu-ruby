@@ -20,12 +20,56 @@ export class CreateManyValidator {
   public messages: CustomMessages = {}
 }
 
+export class StoreValidator {
+  constructor(protected ctx: HttpContextContract) {}
+
+  public schema = schema.create({
+    firstname: schema.string({ trim: true }),
+    lastname: schema.string({ trim: true }),
+    password: schema.string({ trim: true }),
+    email: schema.string.optional({ trim: true }, [
+      rules.unique({ table: 'users', column: 'email' })
+    ]),
+    numero: schema.string.optional({ trim: true }, [
+      rules.unique({ table: 'users', column: 'numero' })
+    ]),
+    roles: schema.array.optional().members(schema.string({ trim: true }, [
+      rules.exists({
+        table: 'roles', column: 'id'
+      })
+    ])),
+    permissions: schema.array.optional().members(schema.string({ trim: true }, [
+      rules.exists({
+        table: 'permissions', column: 'id'
+      })
+    ]))
+
+  })
+}
+
 export class UpdateMeValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
     firstname: schema.string.optional({ trim: true }),
-    lastname: schema.string.optional({ trim: true })
+    lastname: schema.string.optional({ trim: true }),
+    password: schema.string.optional({ trim: true }),
+    email: schema.string.optional({ trim: true }, [
+      rules.unique({ table: 'users', column: 'email' })
+    ]),
+    numero: schema.string.optional({ trim: true }, [
+      rules.unique({ table: 'users', column: 'numero' })
+    ]),
+    roles: schema.array.optional().members(schema.string({ trim: true }, [
+      rules.exists({
+        table: 'roles', column: 'id'
+      })
+    ])),
+    permissions: schema.array.optional().members(schema.string({ trim: true }, [
+      rules.exists({
+        table: 'permissions', column: 'id'
+      })
+    ]))
   })
 
   public messages: CustomMessages = {}
