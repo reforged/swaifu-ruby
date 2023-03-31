@@ -14,7 +14,12 @@ export class CreateManyValidator {
         ]),
         password: schema.string()
       })
-    )
+    ),
+    roles: schema.array.optional().members(schema.string({ trim: true }, [
+      rules.exists({
+        table: 'roles', column: 'id'
+      })
+    ])),
   })
 
   public messages: CustomMessages = {}

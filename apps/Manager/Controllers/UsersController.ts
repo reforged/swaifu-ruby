@@ -17,9 +17,17 @@ export default class UsersController {
 
   public async createMany ({ request }: HttpContextContract) {
     const data = await request.validate(CreateManyValidator)
-    console.log(data.users)
+    console.log(data)
 
-    await User.createMany(data.users)
+    const users = await User.createMany(data.users)
+    if (data.roles) {
+      for (const user of users) {
+        await user.related('roles').sync(data.roles)
+      }
+    }
+
+    return users
+
   }
 
   public async store ({ request, response }: HttpContextContract) {
