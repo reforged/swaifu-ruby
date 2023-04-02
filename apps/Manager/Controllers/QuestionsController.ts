@@ -1,0 +1,117 @@
+import {HttpContextContract} from "@ioc:Adonis/Core/HttpContext";
+import Question from "Domains/Questions/Models/Question";
+import {StoreValidator, UpdateValidator} from "App/Manager/Validators/QuestionValidator";
+import Reponse from "Domains/Questions/Models/Reponse";
+
+export default class QuestionsController {
+
+  public async index ({ bouncer }: HttpContextContract) {
+    await bouncer.with('QuestionPolicy').authorize('view')
+    return Question.query()
+      .preload('reponses')
+      .preload('user')
+      .preload('etiquettes')
+  }
+
+  public async show ({ bouncer, params }: HttpContextContract) {
+    await bouncer.with('QuestionPolicy').authorize('view')
+    console.log(params.id)
+    const question = await Question.findOrFail(params.id)
+    await question.load('reponses')
+    await question.load('etiquettes')
+    await question.load('user')
+    return question
+  }
+
+  public async user ({ bouncer, auth}: HttpContextContract) {
+    await bouncer.with('QuestionPolicy').authorize('view')
+
+    return Question.query().where('user_id', auth.user!.id)
+      .preload('etiquettes')
+      .preload('reponses')
+  }
+
+  public async store ({ bouncer, request, auth }: HttpContextContract) {
+    await bouncer.with('QuestionPolicy').authorize('store')
+    const data = await request.validate(StoreValidator)
+
+    const enonce = {
+      data: data.enonce
+    }
+
+    const question = await Question.create({
+      label: data.label,
+      enonce: enonce,
+      userId: auth.user?.id,
+      type: data.type
+    })
+    await question.related('etiquettes').sync(data.etiquettes)
+
+    data.reponses.map(async (item) => {
+      await Reponse.create({
+        questionId: question.id,
+        body: item.body,
+        valide: item.valide
+      })
+    })
+    await question.load('etiquettes')
+    await question.load('reponses')
+    await question.load('user')
+
+    return question
+  }
+
+  public async update ({ bouncer, request, params, response }: HttpContextContract) {
+    await bouncer.with('QuestionPolicy').authorize('update')
+    const question = await Question.findOrFail(params.id)
+    const data = await request.validate(UpdateValidator)
+    console.log(data)
+    await question.load('etiquettes')
+    await question.load('reponses')
+    await this.deleteReponses(question)
+
+    if (data.etiquettes) {
+      await question.related('etiquettes').sync(data.etiquettes)
+    }
+
+    data.reponses.map(async (item) => {
+      await Reponse.create({
+        questionId: question.id,
+        body: item.body,
+        valide: item.valide
+      })
+    })
+    const enonce = {
+      data: data.enonce
+    }
+
+    await question.merge({
+      ...data,
+      enonce: enonce
+    }).save()
+    console.log(question.enonce)
+    return response.send({
+      message: "Question modifiée",
+      question: question
+    })
+
+  }
+  public async destroy ({ bouncer, params, response }: HttpContextContract) {
+    await bouncer.with('QuestionPolicy').authorize('destroy')
+    const question = await Question.findOrFail(params.id)
+
+    await question.delete()
+    return response.send({
+      message: 'Question supprimée',
+      question
+    })
+  }
+
+  public async deleteReponses (question: Question) {
+    await question.load('reponses')
+
+    question.reponses.map(async (item) => {
+      await item.delete()
+    })
+  }
+}

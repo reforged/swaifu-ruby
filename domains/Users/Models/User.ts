@@ -1,7 +1,20 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import {column, beforeSave, BaseModel, beforeCreate} from '@ioc:Adonis/Lucid/Orm'
+import {
+  column,
+  beforeSave,
+  BaseModel,
+  beforeCreate,
+  manyToMany,
+  ManyToMany,
+  hasMany,
+  HasMany
+} from '@ioc:Adonis/Lucid/Orm'
 import { randomUUID } from 'crypto'
+import Permission from 'Domains/Users/Models/Permission'
+import Role from 'Domains/Users/Models/Role'
+import Question from "Domains/Questions/Models/Question";
+import Session from "Domains/Sequences/Models/Session";
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -10,11 +23,32 @@ export default class User extends BaseModel {
   @column()
   public email: string
 
+  @column()
+  public numero: string
+
+  @column()
+  public firstname: string
+
+  @column()
+  public lastname: string
+
   @column({ serializeAs: null })
   public password: string
 
   @column()
   public rememberMeToken: string | null
+
+  @manyToMany(() => Permission)
+  public permissions: ManyToMany<typeof Permission>
+
+  @manyToMany(() => Role)
+  public roles: ManyToMany<typeof Role>
+
+  @hasMany(() => Question)
+  public questions: HasMany<typeof Question>
+
+  @manyToMany(() => Session)
+  public sessions: ManyToMany<typeof Session>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
