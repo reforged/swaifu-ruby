@@ -13,7 +13,7 @@ RUN npm install
 COPY --chown=node:node . .
 
 FROM dependencies AS build
-RUN node ace build ---production
+RUN node ace build --production
 
 FROM base AS production
 ENV NODE_ENV=production
