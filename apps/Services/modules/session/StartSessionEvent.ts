@@ -23,6 +23,8 @@ export default class StartSessionEvent {
         questionId: session.sequence.questions[0].id
       }).save()
 
+      await session.load('reponses')
+      await session.load('users')
       await session.load('question', (query) => {
         query.preload('reponses')
       })

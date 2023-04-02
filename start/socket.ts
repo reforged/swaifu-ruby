@@ -15,7 +15,6 @@ export default class Socket {
     Ws.io.on('connection', async (socket) => {
       await this.registerModules(socket)
     })
-
   }
 
   private async registerModules (socket: WebSocket) {

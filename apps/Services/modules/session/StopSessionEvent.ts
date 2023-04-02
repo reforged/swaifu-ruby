@@ -17,7 +17,7 @@ export default class StopSessionEvent {
     socket.on('StopSession', async (data: Event) => {
       const session = await Session.findOrFail(data.session.id)
       const user = await User.findOrFail(data.user.id)
-
+      await session.load('users')
       const permissions: string[] = await HelperPolicy.getPermissions(user)
       if (permissions.includes('admin') || permissions.includes('store:session')) {
         await session.merge({

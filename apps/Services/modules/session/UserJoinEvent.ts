@@ -14,7 +14,7 @@ export default class UserJoinEvent {
   @inject()
   static async execute (socket: WebSocket) {
     socket.on('UserJoinEvent', async (data: Event) => {
-      const user = await User.findOrFail(data.user.id)
+      const user = await User.query().where('id', data.user.id).first()
       const session = await Session.findBy('code', data.code)
 
       if (!session) {
@@ -33,10 +33,17 @@ export default class UserJoinEvent {
       const newSession = await Session.query()
         .where('id', session.id)
         .preload('users')
+        .preload('question', (query) => {
+          query.preload('reponses')
+        })
+        .preload('reponses')
+        .preload('sequence', (query) => {
+          query.preload('questions')
+        })
         .first()
 
       if (!participants.includes(user.id)) {
-        Ws.io.emit('NewUserEvent', {
+        Ws.io.emit('NewUser', {
           session: newSession
         })
       }
