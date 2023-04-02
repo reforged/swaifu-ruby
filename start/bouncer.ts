@@ -6,7 +6,7 @@
  */
 
 import Bouncer from '@ioc:Adonis/Addons/Bouncer'
-import ManagerPolicies from 'App/Manager/Policies'
+import ManagerPolicies from 'App/Manager/policies'
 
 /*
 |--------------------------------------------------------------------------
