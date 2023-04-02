@@ -77,6 +77,17 @@ export default class AuthController {
     await user.load('roles', (query) => {
       query.preload('permissions')
     })
+    await user.load('sessions', (query) => {
+      query.preload('sequence', (query) => {
+        query.preload('questions', (query) => {
+          query.preload('reponses')
+        })
+      })
+      query.preload('reponses', (query) => {
+        query.where('user_id', user.id)
+      })
+      query.preload('users')
+    })
 
     return user
   }

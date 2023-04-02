@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  postgres:
+    image: 'postgres:latest'
+    ports:
+      - '5444:5444'
+    environment:
+      POSTGRES_USER: 'reforged'
+      POSTGRES_PASSWORD: 123456789
+      POSTGRES:DB: reforged
+
