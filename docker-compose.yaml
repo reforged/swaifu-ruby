@@ -9,4 +9,3 @@ services:
       POSTGRES_USER: 'reforged'
       POSTGRES_PASSWORD: 123456789
       POSTGRES:DB: reforged
-
