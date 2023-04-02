@@ -1,26 +1,16 @@
-ARG NODE_IMAGE=node:16.13.1-alpine
+FROM node:18 as builder
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+COPY . .
+RUN node ace build --production \
+    --ignore-ts-errors \
+    && cd build \
+    && yarn install --production --frozen-lockfile
 
-FROM $NODE_IMAGE AS base
-RUN apk --no-cache add dumb-init
-RUN mkdir -p /home/node/app && chown node:node /home/node/app
-WORKDIR /home/node/app
-USER node
+FROM node:18-alpine
+WORKDIR /app
 RUN mkdir tmp
-
-FROM base AS dependencies
-COPY --chown=node:node ./package*.json ./
-RUN npm install
-COPY --chown=node:node . .
-
-FROM dependencies AS build
-RUN node ace build --production --ignore-ts-errors
-
-FROM base AS production
-ENV NODE_ENV=production
-ENV PORT=$PORT
-ENV HOST=0.0.0.0
-COPY --chown=node:node ./package*.json ./
-RUN npm install
-COPY --chown=node:node --from=build /home/node/app/build .
-EXPOSE $PORT
-CMD [ "dumb-init", "node", "server.js" ]
+COPY --from=builder /app/build .
+EXPOSE 3333
+CMD ["node", "server.js"]
