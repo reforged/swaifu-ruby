@@ -1,4 +1,5 @@
 import {BaseCommand} from '@adonisjs/ace'
+import Role from "Domains/Users/Models/Role";
 
 export default class MakeUser extends BaseCommand {
   public static commandName = 'make:user'
@@ -24,13 +25,21 @@ export default class MakeUser extends BaseCommand {
       return
     }
 
-    await User.create({
+    const user = await User.create({
       firstname: firstname,
       lastname: lastname,
       email: email,
       numero: numero,
       password: password,
     })
+
+    const role = await Role.findBy('label', 'Administrateur')
+    if (!role) {
+      this.logger.fatal('Role admin was not created')
+      return
+    }
+
+    await user.related('roles').create(role)
 
     this.logger.success('User was create')
   }

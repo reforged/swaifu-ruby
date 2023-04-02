@@ -59,6 +59,7 @@ export default class NewAnswerEvent {
       })
 
       await session.load('reponses')
+      await session.load('users')
 
       Ws.io.emit('NewAnswer', {
         session
