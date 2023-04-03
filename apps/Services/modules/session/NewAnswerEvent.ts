@@ -20,6 +20,7 @@ export default class NewAnswerEvent {
     socket.on('NewAnswer', async (data: Event) => {
       const user = await User.findOrFail(data.user.id)
       const session = await Session.findOrFail(data.session.id)
+      console.log(data)
 
       try {
         await session.related('reponses').firstOrCreate({
@@ -30,15 +31,19 @@ export default class NewAnswerEvent {
           sessionId: session.id,
           userId: user.id,
           questionId: data.question.id,
-          body: data.session.question.type === 'input'
+          body: data.session.question.type === 'libre'
             ? data.reponse
-            : data.reponse.body,
-          valide: data.session.question.type === 'input'
-            ? data.question.reponses[0].valide
-            : data.question.reponses.find((item) => item.body === data.reponse.body)!.valide
+            : data.session.question.type === 'input'
+              ? data.reponse
+              : data.reponse.body,
+          valide: data.session.question.type === 'libre'
+            ? true
+            : data.session.question.type === 'input'
+              ? data.question.reponses[0].valide
+              : data.question.reponses.find((item) => item.body === data.reponse.body)!.valide
         })
       } catch (e) {
-        console.log("Réponse déjà enregistrée")
+        console.log("Réponse déjà enregistrée", e)
       }
 
 
