@@ -3,5 +3,6 @@ export default {
   QuestionPolicy: () => import('App/Manager/Policies/QuestionPolicy'),
   SequencePolicy: () => import('App/Manager/Policies/SequencePolicy'),
   SessionPolicy: () => import('App/Manager/Policies/SessionPolicy'),
-  PermissionPolicy: () => import('App/Manager/Policies/PermissionPolicy')
+  PermissionPolicy: () => import('App/Manager/Policies/PermissionPolicy'),
+  UserPolicy: () => import('App/Manager/Policies/UserPolicy')
 }
