@@ -48,12 +48,11 @@ export class StoreValidator {
         table: 'permissions', column: 'id'
       })
     ]))
-
   })
 }
 
-export class UpdateMeValidator {
-  constructor(protected ctx: HttpContextContract) {}
+export class UpdateValidator {
+  constructor (protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
     firstname: schema.string.optional({ trim: true }),
@@ -76,6 +75,4 @@ export class UpdateMeValidator {
       })
     ]))
   })
-
-  public messages: CustomMessages = {}
 }
