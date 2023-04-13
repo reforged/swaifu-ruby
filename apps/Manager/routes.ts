@@ -1,5 +1,9 @@
 import Route from '@ioc:Adonis/Core/Route'
 
+// @ts-ignore
+import pkg from '../../package.json'
+import process from 'process'
+
 Route.group(() => {
   Route.group(() => {
     Route.post('/login/numero', 'AuthController.loginNumero').as('auth.login.numero')
@@ -73,4 +77,9 @@ Route.group(() => {
       Route.get('/:id', 'PermissionsController.show')
     }).prefix('permissions')
   }).middleware(['auth'])
+
+  Route.get('/version', () => ({
+    uptime: process.uptime(),
+    version: pkg.version,
+  }))
 }).namespace('App/Manager/Controllers')
