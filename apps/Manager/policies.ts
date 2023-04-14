@@ -4,5 +4,6 @@ export default {
   SequencePolicy: () => import('App/Manager/Policies/SequencePolicy'),
   SessionPolicy: () => import('App/Manager/Policies/SessionPolicy'),
   PermissionPolicy: () => import('App/Manager/Policies/PermissionPolicy'),
-  UserPolicy: () => import('App/Manager/Policies/UserPolicy')
+  UserPolicy: () => import('App/Manager/Policies/UserPolicy'),
+  RolePolicy: () => import('App/Manager/policies/RolePolicy')
 }

@@ -3,14 +3,16 @@ import Role from "Domains/Users/Models/Role";
 import {StoreValidator} from "App/Manager/Validators/RoleValidator";
 
 export default class RolesController {
-  public async index () {
+  public async index ({ bouncer }: HttpContextContract) {
+    await bouncer.with('RolePolicy').authorize('view')
     return Role.query()
       .preload('permissions')
       .preload('users')
       .orderBy('power', 'desc')
   }
 
-  public async show ({ params }: HttpContextContract) {
+  public async show ({ params, bouncer }: HttpContextContract) {
+    await bouncer.with('RolePolicy').authorize('view')
     return Role.query()
       .where('id', params.id)
       .preload('permissions')
@@ -18,7 +20,8 @@ export default class RolesController {
       .first()
   }
 
-  public async store ({ request }: HttpContextContract) {
+  public async store ({ request, bouncer }: HttpContextContract) {
+    await bouncer.with('RolePolicy').authorize('store')
     const data = await request.validate(StoreValidator)
 
     const role = await Role.create(data)
@@ -28,8 +31,9 @@ export default class RolesController {
     return role
   }
 
-  public async destroy ({ params }: HttpContextContract) {
+  public async destroy ({ params, bouncer }: HttpContextContract) {
     const role = await Role.findOrFail(params.id)
+    await bouncer.with('RolePolicy').authorize('destroy', role)
 
     return role.delete()
   }
