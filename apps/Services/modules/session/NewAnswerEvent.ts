@@ -18,9 +18,9 @@ export default class NewAnswerEvent {
   @inject()
   static async execute (socket: WebSocket) {
     socket.on('NewAnswer', async (data: Event) => {
+
       const user = await User.findOrFail(data.user.id)
       const session = await Session.findOrFail(data.session.id)
-      console.log(data)
 
       try {
         await session.related('reponses').firstOrCreate({
@@ -43,7 +43,9 @@ export default class NewAnswerEvent {
               : data.question.reponses.find((item) => item.body === data.reponse.body)!.valide
         })
       } catch (e) {
-        console.log("Réponse déjà enregistrée", e)
+        return socket.emit('ResponseOfAnswerSending', {
+          message: e.message
+        })
       }
 
 
@@ -56,6 +58,8 @@ export default class NewAnswerEvent {
           query.preload('reponses')
         })
       })
+
+
 
       socket.emit('ResponseOfAnswerSending', {
         message: "Réponse enregistré",

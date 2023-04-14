@@ -15,7 +15,7 @@ export default class QuestionsController {
 
   public async show ({ bouncer, params }: HttpContextContract) {
     await bouncer.with('QuestionPolicy').authorize('view')
-    console.log(params.id)
+
     const question = await Question.findOrFail(params.id)
     await question.load('reponses')
     await question.load('etiquettes')
@@ -65,7 +65,7 @@ export default class QuestionsController {
     await bouncer.with('QuestionPolicy').authorize('update')
     const question = await Question.findOrFail(params.id)
     const data = await request.validate(UpdateValidator)
-    console.log(data)
+
     await question.load('etiquettes')
     await question.load('reponses')
     await this.deleteReponses(question)
@@ -89,7 +89,7 @@ export default class QuestionsController {
       ...data,
       enonce: enonce
     }).save()
-    console.log(question.enonce)
+
     return response.send({
       message: "Question modifiée",
       question: question

@@ -19,7 +19,7 @@ export default class UsersController {
   public async createMany ({ bouncer, request }: HttpContextContract) {
     await bouncer.with('UserPolicy').authorize('store')
     const data = await request.validate(CreateManyValidator)
-    console.log(data)
+
 
     const users = await User.createMany(data.users)
     if (data.roles) {

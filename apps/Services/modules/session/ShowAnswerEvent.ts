@@ -72,7 +72,9 @@ export default class ShowAnswerEvent {
       const session = await Session.query()
         .where('id', data.session.id)
         .preload('question', (query) => {
-          query.preload('reponses')
+          query.preload('reponses', (query) => {
+            //query.where('question_id', session.question.id)
+          })
         })
         .preload('reponses')
         .first()
@@ -84,7 +86,11 @@ export default class ShowAnswerEvent {
 
       if (!question || !session) return
       if (question.type === 'libre') {
-        const props = session.reponses.map((item) => item.body)
+        const props = session.reponses
+          .filter((item) => {
+            if (item.questionId === session.questionId) return item
+          })
+          .map((item) => item.body)
         const groupedWords = groupSimilarStrings(props)
 
         const li: {text: string, size: number}[] = []
