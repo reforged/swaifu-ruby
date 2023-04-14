@@ -21,7 +21,11 @@ export default class RolesController {
   public async store ({ request }: HttpContextContract) {
     const data = await request.validate(StoreValidator)
 
-    return Role.create(data)
+    const role = await Role.create(data)
+    if (data.permissions) {
+      await role.related('permissions').sync(data.permissions)
+    }
+    return role
   }
 
   public async destroy ({ params }: HttpContextContract) {
