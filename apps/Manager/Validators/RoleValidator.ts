@@ -10,7 +10,12 @@ export class StoreValidator {
         table: 'roles', column: 'label'
       })
     ]),
-    power: schema.number.optional()
+    power: schema.number.optional(),
+    permissions: schema.array.optional().members(schema.string({ trim: true }, [
+      rules.exists({
+        table: 'permissions', column: 'id'
+      })
+    ]))
   })
 
   public messages: CustomMessages = {}
