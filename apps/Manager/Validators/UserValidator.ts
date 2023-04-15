@@ -12,7 +12,10 @@ export class CreateManyValidator {
         numero: schema.string({}, [
           rules.unique({ table: 'users', column: 'numero'})
         ]),
-        password: schema.string()
+        password: schema.string(),
+        email: schema.string({}, [
+          rules.unique({ table: 'users', column: 'email'})
+        ])
       })
     ),
     roles: schema.array.optional().members(schema.string({ trim: true }, [
