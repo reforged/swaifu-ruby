@@ -21,6 +21,7 @@ export default class NewAnswerEvent {
 
       const user = await User.findOrFail(data.user.id)
       const session = await Session.findOrFail(data.session.id)
+      await session.load('question', (query) => query.preload('reponses'))
 
       try {
         await session.related('reponses').firstOrCreate({
@@ -39,7 +40,7 @@ export default class NewAnswerEvent {
           valide: data.session.question.type === 'libre'
             ? true
             : data.session.question.type === 'input'
-              ? data.question.reponses[0].valide
+              ? data.question.reponses[0].body === session.question.reponses[0].body
               : data.question.reponses.find((item) => item.body === data.reponse.body)!.valide
         })
       } catch (e) {
