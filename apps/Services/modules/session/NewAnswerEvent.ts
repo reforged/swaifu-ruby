@@ -10,7 +10,7 @@ type Event = {
   user: User
   session: Session
   question: Question
-  reponse: Reponse
+  reponse: Reponse | string
 }
 
 @inject()
@@ -40,7 +40,7 @@ export default class NewAnswerEvent {
           valide: data.session.question.type === 'libre'
             ? true
             : data.session.question.type === 'input'
-              ? data.question.reponses[0].body === session.question.reponses[0].body
+              ? (data.reponse as string).toLowerCase() === session.question.reponses[0].body.toLowerCase()
               : data.question.reponses.find((item) => item.body === data.reponse.body)!.valide
         })
       } catch (e) {
